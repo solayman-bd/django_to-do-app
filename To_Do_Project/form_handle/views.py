@@ -71,17 +71,19 @@ def changePassword(request):
         return redirect('login')
 
 def setPassword(request):
-    if request.method == 'POST':
-        form = SetPasswordForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)
-            request.session['password_updated'] = True
-            return redirect('profile')
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = SetPasswordForm(request.user, request.POST)
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user)
+                request.session['password_updated'] = True
+                return redirect('profile')
+        else:
+            form = SetPasswordForm(request.user)
+        return render(request, 'setPassword.html', {'form': form})
     else:
-        form = SetPasswordForm(request.user)
-    return render(request, 'setPassword.html', {'form': form})
-
+        return redirect('login')
 
 def userUpdate(request):
     if request.user.is_authenticated:
@@ -99,48 +101,68 @@ def userUpdate(request):
         return redirect('login')
 
 def addTask(request):
-    if request.method == 'POST':
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('showTasks')
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = TaskForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('showTasks')
+        else:
+            form = TaskForm()
+        return render(request, 'addTask.html', {'form': form})
     else:
-        form = TaskForm()
-    return render(request, 'addTask.html', {'form': form})
+        return redirect('login')
 def showTasks(request):
-    # tasks = TaskModel.objects.all()
-    incomplete_tasks = TaskModel.objects.filter(is_completed=False)
-    return render(request, 'showTasks.html', {'tasks': incomplete_tasks})
+    if request.user.is_authenticated:
+        # tasks = TaskModel.objects.all()
+        incomplete_tasks = TaskModel.objects.filter(is_completed=False)
+        return render(request, 'showTasks.html', {'tasks': incomplete_tasks})
+    else:
+        return redirect('login')
 
 def deleteTask(request, task_id):
-    task = TaskModel.objects.get(pk=task_id)
-    task.delete()
-    return redirect('showTasks')
+    if request.user.is_authenticated:
+        task = TaskModel.objects.get(pk=task_id)
+        task.delete()
+        return redirect('showTasks')
+    else:
+        return redirect('login')
 
 def editTask(request, task_id):
-    task = TaskModel.objects.get(pk=task_id)
-    if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
-        if form.is_valid():
-            form.save()
-            return redirect('showTasks')
+    if request.user.is_authenticated:
+        task = TaskModel.objects.get(pk=task_id)
+        if request.method == 'POST':
+            form = TaskForm(request.POST, instance=task)
+            if form.is_valid():
+                form.save()
+                return redirect('showTasks')
+        else:
+            form = TaskForm(instance=task)
+        return render(request, 'editTask.html', {'form': form})
     else:
-        form = TaskForm(instance=task)
-    return render(request, 'editTask.html', {'form': form})
-
+        return redirect('login')
+    
 def completeTask(request, task_id):
-    task = TaskModel.objects.get(pk=task_id)
-    task.is_completed = True
-    task.save()
-    return redirect('completedTasks')
-
+    if request.user.is_authenticated:
+        task = TaskModel.objects.get(pk=task_id)
+        task.is_completed = True
+        task.save()
+        return redirect('completedTasks')
+    else:
+        return redirect('login')
+    
 def completedTasks(request):
-    completedTasks = TaskModel.objects.filter(is_completed=True)
-    return render(request, 'completedTasks.html', {'completed_tasks': completedTasks})
-
+    if request.user.is_authenticated:
+        completedTasks = TaskModel.objects.filter(is_completed=True)
+        return render(request, 'completedTasks.html', {'completed_tasks': completedTasks})
+    else:
+        return redirect('login')
 
 
 def deleteCompletedTask(request, task_id):
-    task = TaskModel.objects.get(pk=task_id)
-    task.delete()
-    return redirect('completedTasks')
+    if request.user.is_authenticated:
+        task = TaskModel.objects.get(pk=task_id)
+        task.delete()
+        return redirect('completedTasks')
+    else:
+        return redirect('login')
