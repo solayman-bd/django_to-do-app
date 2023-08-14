@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Completed Tasks{% endblock %}
+{% block heading %}Completed Tasks{{ block.super }}{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card bg-info">
+                <div class="card-body p-4 rounded">
+                    <h2 class="mb-4">Completed Tasks</h2>
+                    {% if completed_tasks %}
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in completed_tasks %}
+                            <tr>
+                                <td>{{ task.taskTitle }}</td>
+                                <td>
+                                    <form action="{% url 'deleteCompletedTask' task.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="text-center">No completed tasks to show.</p>
+                    {% endif %}
+                    <div class="text-center">
+                        <a href="{% url 'profile' %}" class="btn btn-primary">Back to Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

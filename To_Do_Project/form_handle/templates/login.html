@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block heading %}Login Page{{ block.super }}{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-info">
+                <div class="card-body p-4 rounded">
+                    {% if messages %}
+                    <div class="mb-3">
+                        {% for m in messages %}
+                        <div {% if m.tags %} class="alert alert-{{ m.tags }}" {% endif %} role="alert">
+                            {{ m }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <h2 class="mb-4 text-center">Login</h2>
+                    <form class="needs-validation" action="" novalidate method="post">
+                        {% csrf_token %}
+                        {% for fm in form %}
+                        <div class="mb-3">
+                            {{ fm.label_tag }}
+                            {{ fm }}
+                            {% if fm.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in fm.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% if form.non_field_errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-primary btn-lg" type="submit">Submit</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <small>Don't have an account? <a href="{% url 'signUp' %}" class="text-secondary">Sign Up</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block heading %}Profile Page{{ block.super }}{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">Welcome to Your Profile Page</h4>
+                </div>
+                <div class="card-body">
+                    {% if password_updated %}
+                    <div class="alert alert-success" role="alert">
+                        Your password was successfully updated!
+                    </div>
+                    {% endif %}
+                    {% if profile_updated %}
+                    <div class="alert alert-success" role="alert">
+                        Your profile was successfully updated!
+                    </div>
+                    {% endif %}
+                    <p class="mb-3">Hello, {{ user }}!</p>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'passChange' %}" class="btn btn-primary m-2">Change Password</a>
+                        <a href="{% url 'userUpdate' %}" class="btn btn-secondary m-2">Update Profile</a>
+                        <a href="{% url 'addTask' %}" class="btn btn-success m-2">Add Task</a>
+                        <a href="{% url 'showTasks' %}" class="btn btn-info m-2">Show Tasks</a>
+                        <a href="{% url 'completedTasks' %}" class="btn btn-warning m-2">Show Completed Tasks</a>
+                    </div>
+                    
+                    <div class="mt-3">
+                        Forgot password? No worries! <a href="{% url 'passSet' %}" class="text-secondary">Change password without your old one</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
